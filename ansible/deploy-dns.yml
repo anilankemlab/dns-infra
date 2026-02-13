@@ -1,0 +1,65 @@
+- hosts: dns
+  become: yes
+  vars_files:
+    - ../dns_records.yml
+
+  vars:
+    forward_zone_file: "/etc/bind/db.{{ domain }}"
+    reverse_zone_file: "/etc/bind/db.{{ network }}"
+    reverse_zone_name: "{{ network.split('.')[2] }}.{{ network.split('.')[1] }}.{{ network.split('.')[0] }}.in-addr.arpa"
+    backup_dir: "/etc/bind/backup"
+
+  tasks:
+
+    - name: Create backup directory
+      file:
+        path: "{{ backup_dir }}"
+        state: directory
+
+    - name: Backup existing forward zone
+      copy:
+        src: "{{ forward_zone_file }}"
+        dest: "{{ backup_dir }}/db.{{ domain }}.bak"
+        remote_src: yes
+      ignore_errors: yes
+
+    - name: Backup existing reverse zone
+      copy:
+        src: "{{ reverse_zone_file }}"
+        dest: "{{ backup_dir }}/db.{{ network }}.bak"
+        remote_src: yes
+      ignore_errors: yes
+
+    - name: Generate serial
+      set_fact:
+        serial: "{{ lookup('pipe', 'date +%Y%m%d%H') }}"
+
+    - name: Deploy forward zone
+      template:
+        src: templates/forward.j2
+        dest: "{{ forward_zone_file }}"
+
+    - name: Deploy reverse zone
+      template:
+        src: templates/reverse.j2
+        dest: "{{ reverse_zone_file }}"
+
+    - name: Validate forward zone
+      command: named-checkzone {{ domain }} {{ forward_zone_file }}
+      register: forward_check
+      failed_when: forward_check.rc != 0
+
+    - name: Validate reverse zone
+      command: named-checkzone {{ reverse_zone_name }} {{ reverse_zone_file }}
+      register: reverse_check
+      failed_when: reverse_check.rc != 0
+
+    - name: Validate full bind config
+      command: named-checkconf
+      register: conf_check
+      failed_when: conf_check.rc != 0
+
+    - name: Reload bind
+      service:
+        name: bind9
+        state: reloaded

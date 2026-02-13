@@ -1,0 +1,24 @@
+name: Production DNS Deploy
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - dns_records.yml
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Ansible
+        run: sudo apt-get update && sudo apt-get install -y ansible
+
+      - name: Run DNS Deployment
+        run: |
+          cd ansible
+          ansible-playbook -i inventory.ini deploy-dns.yml

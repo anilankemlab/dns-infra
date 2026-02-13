@@ -1,0 +1,13 @@
+$TTL 604800
+@   IN  SOA ns1.{{ domain }}. admin.{{ domain }}. (
+        {{ serial }}
+        604800
+        86400
+        2419200
+        604800 )
+
+@       IN  NS      ns1
+
+{% for host in records %}
+{{ host.ip.split('.')[-1] }}     IN PTR {{ host.name }}.{{ domain }}.
+{% endfor %}
