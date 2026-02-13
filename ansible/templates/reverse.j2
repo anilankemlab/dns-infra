@@ -6,7 +6,7 @@ $TTL 604800
         2419200
         604800 )
 
-@       IN  NS      ns1
+@       IN  NS      ns1.{{ domain }}.
 
 {% for host in records %}
 {{ host.ip.split('.')[-1] }}     IN PTR {{ host.name }}.{{ domain }}.
