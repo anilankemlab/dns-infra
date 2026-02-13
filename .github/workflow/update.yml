@@ -1,6 +1,12 @@
 name: Production DNS Deploy
 
 on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - dns_records.yml
+
   push:
     branches:
       - main
@@ -8,15 +14,29 @@ on:
       - dns_records.yml
 
 jobs:
-  deploy:
+
+  validate:
+    name: DNS Validation
     runs-on: self-hosted
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # - name: Install Ansible
-      #   run: sudo apt-get update && sudo apt-get install -y ansible
+      - name: Run Validation Only
+        run: |
+          cd ansible
+          ansible-playbook -i inventory.ini deploy-dns.yml --check
+
+  deploy:
+    name: Deploy to Production
+    runs-on: self-hosted
+    needs: validate
+    if: github.event_name == 'push'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
       - name: Run DNS Deployment
         run: |
