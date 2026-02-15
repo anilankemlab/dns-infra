@@ -5,7 +5,8 @@ dns_server_ip: 192.168.1.10
 records:
   - name: proxmox
     ip: 192.168.1.100
-    - name: master
+    
+  - name: master
     ip: 192.168.1.20
     
   - name: worker1
