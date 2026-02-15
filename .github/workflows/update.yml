@@ -38,6 +38,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Add ansible path to PATH
+        run: echo "$HOME/.local/bin" >> $GITHUB_PATH
+
       - name: Run DNS Deployment
         run: |
           cd ansible
