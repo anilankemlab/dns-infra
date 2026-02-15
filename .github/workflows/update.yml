@@ -13,6 +13,7 @@ on:
     paths:
       - dns_records.yml
 
+
 jobs:
 
   validate:
@@ -20,13 +21,23 @@ jobs:
     runs-on: self-hosted
 
     steps:
+
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Add ansible path to PATH
+        run: echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Verify Ansible
+        run: |
+          which ansible-playbook
+          ansible-playbook --version
 
       - name: Run Validation Only
         run: |
           cd ansible
           ansible-playbook -i inventory.ini deploy-dns.yml --check
+
 
   deploy:
     name: Deploy to Production
@@ -35,11 +46,17 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
     steps:
+
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Add ansible path to PATH
         run: echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Verify Ansible
+        run: |
+          which ansible-playbook
+          ansible-playbook --version
 
       - name: Run DNS Deployment
         run: |
