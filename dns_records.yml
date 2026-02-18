@@ -18,10 +18,5 @@ records:
   - name: terraform
     ip: 192.168.1.23
 
-  - name: testing1
-    ip: 192.168.1.24
-
-
-  
 
   
