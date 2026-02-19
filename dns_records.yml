@@ -49,4 +49,4 @@ records:
     ip: 192.168.1.22
 
   - name: terraform
-    ip: 192.168.1.24
+    ip: 192.168.1.23
