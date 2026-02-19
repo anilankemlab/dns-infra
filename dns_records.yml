@@ -12,8 +12,33 @@ records:
   - name: ubuntu1
     ip: 192.168.1.30
 
-  - name: centos1
+  - name: ubuntu2
     ip: 192.168.1.31
+    
+  - name: ubuntu3
+    ip: 192.168.1.32
+
+  - name: ubuntu4
+    ip: 192.168.1.33
+
+  - name: ubuntu5
+    ip: 192.168.1.34
+
+    
+  - name: centos1
+    ip: 192.168.1.35
+
+  - name: centos2
+    ip: 192.168.1.36
+
+  - name: centos3
+    ip: 192.168.1.37
+
+  - name: centos4
+    ip: 192.168.1.38
+
+  - name: centos5
+    ip: 192.168.1.39
 
   - name: master
     ip: 192.168.1.20
