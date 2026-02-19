@@ -10,7 +10,6 @@
     backup_dir: "/etc/bind/backup"
 
   tasks:
-
     - name: Create backup directory
       file:
         path: "{{ backup_dir }}"
@@ -38,26 +37,19 @@
       template:
         src: templates/forward.j2
         dest: "{{ forward_zone_file }}"
+        validate: "named-checkzone {{ domain }} %s"
 
     - name: Deploy reverse zone
       template:
         src: templates/reverse.j2
         dest: "{{ reverse_zone_file }}"
-
-    - name: Validate forward zone
-      command: named-checkzone {{ domain }} {{ forward_zone_file }}
-      register: forward_check
-      failed_when: forward_check.rc != 0
-
-    - name: Validate reverse zone
-      command: named-checkzone {{ reverse_zone_name }} {{ reverse_zone_file }}
-      register: reverse_check
-      failed_when: reverse_check.rc != 0
+        validate: "named-checkzone {{ reverse_zone_name }} %s"
 
     - name: Validate full bind config
       command: named-checkconf
       register: conf_check
       failed_when: conf_check.rc != 0
+      when: not ansible_check_mode
 
     - name: Reload bind
       service:
