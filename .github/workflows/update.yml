@@ -13,20 +13,22 @@ on:
     paths:
       - dns_records.yml
 
-
 jobs:
-
   validate:
     name: DNS Validation
     runs-on: self-hosted
 
     steps:
-
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Add ansible path to PATH
         run: echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Setup SSH Agent
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.DNS_SSH_KEY }}
 
       - name: Verify Ansible
         run: |
@@ -38,7 +40,6 @@ jobs:
           cd ansible
           ansible-playbook -i inventory.ini deploy-dns.yml --check
 
-
   deploy:
     name: Deploy to Production
     runs-on: self-hosted
@@ -46,12 +47,16 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
     steps:
-
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Add ansible path to PATH
         run: echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Setup SSH Agent
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.DNS_SSH_KEY }}
 
       - name: Verify Ansible
         run: |
