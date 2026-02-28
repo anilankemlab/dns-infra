@@ -9,6 +9,12 @@ records:
   - name: ansible
     ip: 192.168.1.12
 
+  - name: semaphore
+    ip: 192.168.1.13
+
+  - name: tailscale
+    ip: 192.168.1.15
+
   - name: ubuntu-1
     ip: 192.168.1.30
 
