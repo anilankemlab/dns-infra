@@ -12,6 +12,9 @@ records:
   - name: semaphore
     ip: 192.168.1.13
 
+  - name: jenkins
+    ip: 192.168.1.14
+
   - name: tailscale
     ip: 192.168.1.15
 
